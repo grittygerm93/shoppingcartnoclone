@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class App {
-    public static List<String> list = new ArrayList<>();
+    public static final List<String> list = new ArrayList<>();
 
     public static void main(String[] args) {
         System.out.println("Welcome to your shopping cart");
@@ -36,7 +36,7 @@ public class App {
                     addList(inputArr);
                     break;
                 case "delete":
-                    int index = Integer.valueOf(inputArr.get(0)).intValue();
+                    int index = Integer.parseInt(inputArr.get(0));
                     list.remove(index);
                     break;
             }
