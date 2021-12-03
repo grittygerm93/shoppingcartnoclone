@@ -1,0 +1,1 @@
+for first push.. adding gitIgnore complicates it.. must create a similar file in IDE for successful push
