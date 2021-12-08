@@ -15,7 +15,7 @@ public class App {
 
         String des = args.length==0? "db": args[0];
 
-        System.out.println("Welcome to your shopping cart");
+        System.out.printf("Welcome to your shopping cart, the available commands are: %n1. login <user> %n2. list %n3. add <items> %n4.delete <item> %n5.save %n6.users %nto exit input <0>");
         
         while (true) {
             String input = s.nextLine();
@@ -48,7 +48,7 @@ public class App {
                     }
                     break;
                 case "add":
-                    addList(currUser, inputArr);
+                    currUser.setCartItems(inputArr);
                     break;
                 case "delete":
                     int index = Integer.parseInt(inputArr.get(0));
@@ -96,10 +96,6 @@ public class App {
         }
         return thisUser;
 
-    }
-
-    private static void addList(User user, List<String> inputArr) {
-        user.setCartItems(inputArr);
     }
 
     private static void printList(User user) {
