@@ -1,15 +1,22 @@
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
+
 public class App {
     public static final List<String> list = new ArrayList<>();
+    public static final List<User> userList = new ArrayList<>();
+    static User currUser;
+    static Scanner s = new Scanner(System.in);
 
     public static void main(String[] args) {
-        System.out.println("Welcome to your shopping cart");
-        Scanner s = new Scanner(System.in);
 
+        String des = args.length==0? "db": args[0];
+
+        System.out.println("Welcome to your shopping cart");
+        
         while (true) {
             String input = s.nextLine();
 
@@ -25,31 +32,79 @@ public class App {
             inputArr.remove(0);
 
             switch (command) {
+                case "login":
+                    if (!ShoppingCartDB.hasUser(inputArr.get(0))) {
+                        currUser = acceptUserLogin(inputArr.get(0));
+                    }
+                    else {
+                        currUser = ShoppingCartDB.load(inputArr.get(0));
+                    }
+                    break;
                 case "list":
-                    if (!list.isEmpty()) {
-                        printList();
+                    if (!currUser.getCartItems().isEmpty()) {
+                        printList(currUser);
                     } else {
                         System.out.println("Your cart is empty");
                     }
                     break;
                 case "add":
-                    addList(inputArr);
+                    addList(currUser, inputArr);
                     break;
                 case "delete":
                     int index = Integer.parseInt(inputArr.get(0));
-                    list.remove(index);
+                    currUser.getCartItems().remove(index);
                     break;
+                case "save":
+                    System.out.println("Your cart has been saved");
+                    try {
+                        ShoppingCartDB.save(des, currUser);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                case "users":
+                    System.out.println("The following users are registered");
+                    for (int i = 0; i < userList.size(); i++) {
+                        System.out.println(i + ". " + userList.get(i).getName());   
+                    }
+                    break;
+                default:
+                    System.out.println("input username first!");
             }
         }
     }
 
-    private static void addList(List<String> inputArr) {
-        list.addAll(inputArr);
+    private static User acceptUserLogin(String userName) {
+        
+        boolean newUser = true;
+        User thisUser = null;   
+
+        for (User users : userList) {
+            if(users.getName().equals(userName)){
+                thisUser = users;
+                System.out.print(thisUser.getName() + ", your cart contains the following items\n");
+                printList(thisUser);
+                newUser = false;
+            }
+        }
+
+        if(newUser) {
+            User user = new User(userName);
+            userList.add(user);
+            thisUser = user;
+            System.out.println(user.getName() + ", your cart is empty");
+        }
+        return thisUser;
+
     }
 
-    private static void printList() {
-        for (int i = 0; i < list.size(); i++) {
-            System.out.println(i+1 + ". " + list.get(i));
+    private static void addList(User user, List<String> inputArr) {
+        user.setCartItems(inputArr);
+    }
+
+    private static void printList(User user) {
+        for (int i = 0; i < user.getCartItems().size(); i++) {
+            System.out.println(i+1 + ". " + user.getCartItems().get(i));
         }
     }
 }
